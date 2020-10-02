@@ -1,0 +1,52 @@
+{
+  "name": "@vinh-vu-0412/test-npm-package",
+  "version": "1.1.11",
+  "description": "this is a test for publishing a package",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/babel src/ --out-dir build --copy-files"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VinhVu0412/test-npm-package.git"
+  },
+  "keywords": [
+    "test"
+  ],
+  "files": [
+    "./build",
+    "./src"
+  ],
+  "author": "Vinh Vu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VinhVu0412/test-npm-package/issues"
+  },
+  "homepage": "https://github.com/VinhVu0412/test-npm-package#readme",
+  "dependencies": {
+    "@emotion/core": "^10.0.35",
+    "@emotion/styled": "^10.0.27",
+    "prop-types": "^15.7.2",
+    "qrcode": "^1.4.4",
+    "raydiant-kit": "^4.5.2",
+    "react": "^16.13.1",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
+    "@babel/preset-react": "^7.10.4"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-react"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties",
+      "@babel/plugin-proposal-object-rest-spread"
+    ]
+  }
+}
