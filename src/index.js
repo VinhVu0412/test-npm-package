@@ -1,5 +1,9 @@
+// fix regeneratorRuntime is not defined
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+
 import getQRCodeProperties from './getQRCodeProperties';
+import withQRCode from './withQRCode';
 import QRCard from './QRCard';
 
-export default () => console.warn('WORKING', [...[1,2], 3]);
-export { getQRCodeProperties, QRCard };
+export { getQRCodeProperties, withQRCode, QRCard };

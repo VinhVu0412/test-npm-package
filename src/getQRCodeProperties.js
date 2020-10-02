@@ -6,7 +6,7 @@ const sizeHelperTexts = {
   large: 'Large: Scannable from approx 4.5ft away',
 };
 
-export default presentation => {
+export default (presentation, singleSize=false) => {
   const {
     qrActive: selectedQrActive,
     qrSource: selectedQrSource,
@@ -40,26 +40,30 @@ export default presentation => {
     .show(showQRControls && selectedQrSource === 'haveQRCode')
     .helperText('Upload your QR code');
 
-  const qrSize = PropTypes.toggleButtonGroup('Size')
-    .exclusive()
-    .option('small', 'Small')
-    .option('medium', 'Medium')
-    .option('large', 'Large')
-    .default('small')
-    .show(showQRControls);
-  qrSize.helperText(sizeHelperTexts[selectedQrSize]);
-
   const qrCallToAction = PropTypes.text('Call to action')
     .maxLength(40)
     .show(showQRControls)
     .helperText("Ex 'Scan for mobile menu'. Max 40 characters");
 
-  return {
+  const controls = {
     qrActive,
     qrSource,
     qrUrlContent,
     qrImage,
-    qrSize,
     qrCallToAction,
   };
+
+  if (!singleSize) {
+    const qrSize = PropTypes.toggleButtonGroup('Size')
+      .exclusive()
+      .option('small', 'Small')
+      .option('medium', 'Medium')
+      .option('large', 'Large')
+      .default('small')
+      .show(showQRControls);
+    qrSize.helperText(sizeHelperTexts[selectedQrSize]);
+    controls.qrSize = qrSize;
+  }
+
+  return controls;
 };
