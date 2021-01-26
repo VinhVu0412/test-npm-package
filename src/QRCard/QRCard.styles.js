@@ -1,66 +1,49 @@
 import styled from '@emotion/styled';
-
-export const QR_IMAGE_SIZE_MAP = {
-  small: 200,
-  medium: 400,
-  large: 525,
-  undefined: 0,
-};
-export const CTA_HORIZONTAL_WIDTH_MAP = {
-  small: 461,
-  medium: 345,
-  large: 118,
-  undefined: 0,
-};
-
-export const getPaddingSize = size => QR_IMAGE_SIZE_MAP[size] / 6;
-export const getQrMaxWidth = size =>
-  QR_IMAGE_SIZE_MAP[size] +
-  CTA_HORIZONTAL_WIDTH_MAP[size] +
-  3 * getPaddingSize(size);
+import {
+  QR_IMAGE_SIZE_MAP,
+  CTA_HORIZONTAL_WIDTH_MAP,
+  getPaddingSize,
+  getQRMaxWidth,
+} from './qrSize';
 
 export const Container = styled('div')(
-  ({ size, textPosition, hasCTA, styles }) => {
+  ({ size, textPosition, hasCTA, styles, vw }) => {
     const paddingSize = getPaddingSize(size);
     const qrSize = QR_IMAGE_SIZE_MAP[size];
 
-    const cardStyles = {
-      position: 'absolute',
-      margin: paddingSize,
-      boxShadow: '8px 8px 16px 0 rgba(0, 0, 0, 0.5)',
-      borderRadius: 8,
-    };
-
-    const sizeWidthPaddings = qrSize + 2 * paddingSize;
+    const sizeWithPaddings = qrSize + 2 * paddingSize;
     const sizeStyles =
       textPosition === 'right'
         ? {
-            width: hasCTA ? getQrMaxWidth(size) : sizeWidthPaddings,
-            height: sizeWidthPaddings,
+            width: vw(hasCTA ? getQRMaxWidth(size) : sizeWithPaddings),
+            height: vw(sizeWithPaddings),
           }
         : {
-            width: sizeWidthPaddings,
-            maxHeight: `calc(100% - ${2 * paddingSize}px)`,
+            width: vw(sizeWithPaddings),
+            maxHeight: `calc(100% - ${vw(2 * paddingSize)})`,
           };
 
     return {
       display: 'flex',
       flexDirection: textPosition === 'right' ? 'row' : 'column',
-      padding: paddingSize,
+      position: 'absolute',
+      margin: vw(paddingSize),
+      padding: vw(paddingSize),
       boxSizing: 'border-box',
+      boxShadow: `${vw(8)} ${vw(8)} ${vw(16)} 0 rgba(0, 0, 0, 0.5)`,
+      borderRadius: vw(8),
       backgroundColor: '#FFFFFF',
       ...sizeStyles,
-      ...cardStyles,
       ...styles,
     };
   },
 );
 
-export const QRCode = styled('img')(({ size, styles }) => ({
+export const QRCode = styled('img')(({ size, styles, vw }) => ({
   flexShrink: 0,
   objectFit: 'contain',
-  width: QR_IMAGE_SIZE_MAP[size],
-  height: QR_IMAGE_SIZE_MAP[size],
+  width: vw(QR_IMAGE_SIZE_MAP[size]),
+  height: vw(QR_IMAGE_SIZE_MAP[size]),
   ...styles,
 }));
 
@@ -72,30 +55,29 @@ export const CallToAction = styled('div')(
     overflowVertical,
     overflowHorizontal,
     styles,
+    vw,
   }) => {
-    let ctaStyles;
-    if (textPosition === 'right') {
-      ctaStyles = {
-        alignItems: overflowVertical ? 'flex-start' : 'center',
-        justifyContent: 'flex-start',
-        marginLeft: getPaddingSize(size),
-        width: CTA_HORIZONTAL_WIDTH_MAP[size],
-      };
-    } else {
-      ctaStyles = {
-        alignItems: 'flex-start',
-        justifyContent: overflowHorizontal ? 'flex-start' : 'center',
-        textAlign: 'center',
-        marginTop: getPaddingSize(size),
-        width: QR_IMAGE_SIZE_MAP[size],
-      };
-    }
+    const ctaStyles =
+      textPosition === 'right'
+        ? {
+            alignItems: overflowVertical ? 'flex-start' : 'center',
+            justifyContent: 'flex-start',
+            marginLeft: vw(getPaddingSize(size)),
+            width: vw(CTA_HORIZONTAL_WIDTH_MAP[size]),
+          }
+        : {
+            alignItems: 'flex-start',
+            justifyContent: overflowHorizontal ? 'flex-start' : 'center',
+            textAlign: 'center',
+            marginTop: vw(getPaddingSize(size)),
+            width: vw(QR_IMAGE_SIZE_MAP[size]),
+          };
 
     return {
       display: 'flex',
       whiteSpace: 'pre-wrap',
       fontFamily: theme.qrCtaFont,
-      letterSpacing: 0.46,
+      letterSpacing: vw(0.46),
       color: '#000000',
       ...ctaStyles,
       ...styles,

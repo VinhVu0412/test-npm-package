@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
-export const TextFit = styled('div')(({ elFontSize, calculating }) => ({
+export const TextContent = styled('div')(({ elFontSize, calculating, vw }) => ({
   width: calculating ? '100%' : null,
   height: calculating ? '100%' : null,
-  fontSize: elFontSize,
+  fontSize: vw(elFontSize),
   opacity: calculating ? 0 : 1,
   overflow: calculating ? 'hidden' : null,
 }));

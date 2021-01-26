@@ -1,95 +1,77 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import * as Styles from './TextFit.styles';
 
-class TextFit extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      fontSize: props.maxFontSize,
-      calculating: false,
-    };
+export const getOverflow = ref => {
+  if (!ref.current) {
+    return { overflowVertical: false, overflowHorizontal: false };
   }
 
-  componentDidMount() {
-    this.startCalculating();
-  }
+  const { scrollWidth, scrollHeight, clientWidth, clientHeight } = ref.current;
+  return {
+    overflowVertical: scrollHeight > clientHeight,
+    overflowHorizontal: scrollWidth > clientWidth,
+  };
+};
 
-  componentDidUpdate(prevProps) {
-    const childrenChanged = this.props.children !== prevProps.children;
+const TextFit = ({
+  maxFontSize,
+  minFontSize,
+  step,
+  onCalculated,
+  vw,
+  children,
+}) => {
+  const [fontSize, setFontSize] = React.useState(maxFontSize);
+  const [calculating, setCalculating] = React.useState(false);
 
-    if (childrenChanged) {
-      this.startCalculating();
-    }
+  React.useEffect(
+    () => {
+      setFontSize(maxFontSize);
+      setCalculating(true);
+    },
+    [children],
+  );
 
-    if (this.state.calculating) {
-      this.calculate();
-    }
-  }
+  const ref = React.useRef(null);
 
-  getOverflow() {
-    if (!this.element) {
-      return false;
-    }
+  React.useEffect(
+    () => {
+      if (calculating) {
+        const nextFontSize = fontSize - step;
+        // In Menus, we don't need to shrink the text if it exceeds the height
+        const overflows = getOverflow(ref);
 
-    const {
-      scrollWidth,
-      scrollHeight,
-      clientWidth,
-      clientHeight,
-    } = this.element;
-    return {
-      overflowVertical: scrollHeight > clientHeight,
-      overflowHorizontal: scrollWidth > clientWidth,
-    };
-  }
+        if (!overflows.overflowHorizontal || nextFontSize < minFontSize) {
+          setCalculating(false);
+          onCalculated(overflows);
+        } else {
+          setFontSize(nextFontSize);
+        }
+      }
+    },
+    [calculating, fontSize, ref],
+  );
 
-  startCalculating() {
-    const { maxFontSize } = this.props;
-    this.setState({ fontSize: maxFontSize, calculating: true });
-  }
-
-  calculate() {
-    const { minFontSize, step } = this.props;
-    const { fontSize } = this.state;
-    const nextFontSize = fontSize - step;
-
-    // In Menus, we don't need to shrink the text if it exceeds the height
-    if (!this.getOverflow().overflowHorizontal || nextFontSize < minFontSize) {
-      this.doneCalculate();
-      return;
-    }
-
-    this.setState({ fontSize: nextFontSize });
-  }
-
-  doneCalculate() {
-    const { onCalculated } = this.props;
-    this.setState({ calculating: false });
-    onCalculated(this.getOverflow());
-  }
-
-  render() {
-    const { children } = this.props;
-    const { fontSize, calculating } = this.state;
-    return (
-      <Styles.TextFit
-        ref={el => (this.element = el)}
-        elFontSize={fontSize}
-        calculating={calculating}
-      >
-        {children}
-      </Styles.TextFit>
-    );
-  }
-}
+  return (
+    <Styles.TextContent
+      ref={ref}
+      elFontSize={fontSize}
+      calculating={calculating}
+      vw={vw}
+    >
+      {children}
+    </Styles.TextContent>
+  );
+};
 
 TextFit.propTypes = {
   maxFontSize: PropTypes.number,
   minFontSize: PropTypes.number,
   step: PropTypes.number,
   onCalculated: PropTypes.func,
+  vw: PropTypes.func,
   children: PropTypes.node.isRequired,
 };
 
